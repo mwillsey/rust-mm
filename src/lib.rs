@@ -93,6 +93,22 @@ mod tests {
         let rsc = n as isize;
         let csc = 1;
         #[rustfmt::skip]
+        matrixmultiply::sgemm(m, k, n, alpha,
+                              a, rsa, csa,
+                              b, rsb, csb,
+                              beta, c, rsc, csc);
+    }
+
+    unsafe fn mm_mt_sgemm(m: usize, k: usize, n: usize, a: *const f32, b: *const f32, c: *mut f32) {
+        let alpha = 1.0;
+        let beta = 1.0;
+        let rsa = k as isize;
+        let csa = 1;
+        let rsb = n as isize;
+        let csb = 1;
+        let rsc = n as isize;
+        let csc = 1;
+        #[rustfmt::skip]
         matrixmultiply_mt::sgemm(m, k, n, alpha,
                               a, rsa, csa,
                               b, rsb, csb,
@@ -144,6 +160,9 @@ mod tests {
         });
         bench_one(iters, flops, "mm_sgemm", || unsafe {
             mm_sgemm(m, k, n, a.as_ptr(), b.as_ptr(), c2.as_mut_ptr());
+        });
+        bench_one(iters, flops, "mm_mt_sgemm", || unsafe {
+            mm_mt_sgemm(m, k, n, a.as_ptr(), b.as_ptr(), c2.as_mut_ptr());
         });
     }
 
